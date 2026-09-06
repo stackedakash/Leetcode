@@ -1,0 +1,36 @@
+import java.util.Arrays;
+
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        if (amount == 0) return 0;
+        
+        // Memoization array initialized to -2 (-2 = unvisited, -1 = impossible)
+        int[] memo = new int[amount + 1];
+        Arrays.fill(memo, -2);
+        
+        return bt(coins, amount, memo);
+    }
+
+    private int bt(int[] coins, int rem, int[] memo) {
+        if (rem < 0) return -1;
+        if (rem == 0) return 0;
+        
+        // If we already calculated the result for this remaining amount, return it immediately
+        if (memo[rem] != -2) return memo[rem];
+
+        int minCoins = Integer.MAX_VALUE;
+
+        for (int coin : coins) {
+            int res = bt(coins, rem - coin, memo);
+            if (res >= 0 && res < minCoins) {
+                minCoins = 1 + res;
+            }
+        }
+
+        // Cache the result in the memo array before returning
+        
+        memo[rem] = (minCoins == Integer.MAX_VALUE) ? -1 : minCoins;
+        System.out.println( rem+"rem"+memo[rem]);
+        return memo[rem];
+    }
+}
