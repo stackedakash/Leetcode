@@ -1,0 +1,40 @@
+class Solution {
+    private Map<Integer, List<Integer>> hm = new HashMap<>();
+    private Set<Integer> visit = new HashSet<>();
+    public boolean validTree(int n, int[][] edges) {
+        // A tree with n nodes must have exactly n - 1 edges
+        if (edges.length != n - 1) {
+            return false;
+        }
+        for (int i = 0; i < n; i++) {
+            hm.put(i, new ArrayList<>());
+        }
+        // 1. Build an undirected graph (add edges in both directions)
+        for (int[] edge : edges) {
+            hm.get(edge[0]).add(edge[1]);
+            hm.get(edge[1]).add(edge[0]);
+        }
+       // System.out.println(hm);
+        // 2. Run DFS once starting from node 0 with -1 as parent
+        if (!dfs(0, -1)) {
+            return false;
+        }
+        // 3. Ensure all nodes are connected (visited in a single run)
+        return visit.size() == n;
+    }
+    private boolean dfs(int number, int parent) {
+        if (visit.contains(number)) {
+            return false; // Cycle detected
+        }
+        visit.add(number);
+        for (int num : hm.get(number)) {
+            if (num == parent) {
+                continue; // Skip going back to the parent node
+            }
+            if (!dfs(num, number)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
