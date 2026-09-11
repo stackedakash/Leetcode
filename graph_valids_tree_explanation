@@ -1,0 +1,33 @@
+Javaclass Solution {
+    private Map<Integer, List<Integer>> hm = new HashMap<>();
+    private Set<Integer> visit = new HashSet<>();
+Map<Integer, List<Integer>> hm: Stores the graph as an adjacency list, mapping each node (an Integer) to a list of its connected neighbors (List<Integer>).Set<Integer> visit: Tracks visited nodes during traversal. This serves two purposes: detecting cycles during DFS and checking if all nodes are connected at the end.Method: validTree(int n, int[][] edges)Java    if (edges.length != n - 1) {
+        return false;
+    }
+Why: A basic property of any tree with $n$ nodes is that it must contain exactly $n - 1$ edges. If edges.length is greater, a cycle is guaranteed; if smaller, the graph cannot be fully connected. Checking this immediately saves unnecessary DFS computation.Java    for (int i = 0; i < n; i++) {
+        hm.put(i, new ArrayList<>());
+    }
+Why: Initializes empty adjacency lists for every node from 0 to n - 1. This prevents NullPointerException errors later when calling hm.get(node).Java    for (int[] edge : edges) {
+        hm.get(edge[0]).add(edge[1]);
+        hm.get(edge[1]).add(edge[0]);
+    }
+Why: Graphs in tree problems are undirected. An edge [A, B] means you can travel from A -> B and from B -> A. Adding both directions ensures the graph traversal can explore all connected paths.Java    if (!dfs(0, -1)) {
+        return false;
+    }
+Why: Initiates the Depth-First Search starting from node 0. Node 0 is assigned a dummy parent of -1 because it has no incoming path. If dfs() encounters a cycle, it returns false, so validTree immediately returns false.Java    return visit.size() == n;
+Why: Validates connectivity. A tree must be a single connected component. If visit.size() == n, every node was reached in a single DFS run from node 0. If visit.size() < n, the graph has disconnected islands/components.Helper Method: dfs(int number, int parent)Javaprivate boolean dfs(int number, int parent) {
+Why: Takes number (current node) and parent (the node we just came from). parent is required to prevent immediate backtracking along undirected edges.Java    if (visit.contains(number)) {
+        return false;
+    }
+Why: Cycle detection step. If we encounter a node that is already inside the visit set (and it wasn't skipped by the parent check), it means we found an alternate path back to an already visited node—a cycle.Java    visit.add(number);
+Why: Marks the current node as visited so subsequent recursive calls know this node has been processed.Java    for (int num : hm.get(number)) {
+Why: Loops through all direct neighbors of the current node number.Java        if (num == parent) {
+            continue;
+        }
+Why: Crucial check. Because edges are undirected, node A points to B, and node B points back to A. Without this line, moving A -> B would cause B to look at A and falsely flag it as a cycle. This ignores the edge we just crossed.Java        if (!dfs(num, number)) {
+            return false;
+        }
+    }
+Why: Recursively calls dfs on neighbor num, passing number as its new parent. If any child sub-tree detects a cycle and returns false, the error bubbles all the way up.Java    return true;
+}
+Why: If all neighbors of the current node are processed without detecting a cycle, this branch of traversal is valid.
