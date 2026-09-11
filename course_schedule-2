@@ -1,0 +1,50 @@
+import java.util.*;
+public class Solution {
+    private Map<Integer, List<Integer>> hm = new HashMap<>();
+    private Set<Integer> visit = new HashSet<>();
+    private List<Integer> result = new ArrayList<>();
+    // 1. Added to store the order
+    public int[] findOrder(int numCourses, int[][] prerequisites) 
+    {
+        for (int i = 0; i < numCourses; i++) {
+            hm.put(i, new ArrayList<>());
+        }
+        for (int[] prereq : prerequisites) {
+            hm.get(prereq[0]).add(prereq[1]);
+        }
+        for (int course = 0; course < numCourses; course++) {
+            if (!dfs(course)) {
+                return new int[0];
+                // Return empty array if a cycle is found 
+            }
+        }
+        // Convert ArrayList to primitive int array
+        int[] order = new int[numCourses];
+        for (int i = 0; i < numCourses; i++) {
+            order[i] = result.get(i);
+        }
+        return order;
+    }
+    private boolean dfs(int course) {
+        if (visit.contains(course)) {
+            return false; // Cycle detected
+        }
+        if (hm.get(course).isEmpty()) {
+ // Avoid adding duplicate courses to result during re-checks
+            if (!result.contains(course)) {
+                result.add(course);
+            }
+            return true;
+        }
+        visit.add(course);
+        for (int pre : hm.get(course)) {
+            if (!dfs(pre)) {
+                return false;
+            }
+        }
+        visit.remove(course);
+        hm.put(course, new ArrayList<>());
+        result.add(course); 
+//2.Add course to order AFTER exploring all its prerequisites!
+        return true;
+    }}
