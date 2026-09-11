@@ -1,0 +1,38 @@
+public class Solution {
+    private Map<Integer, List<Integer>> hm = new HashMap<>();
+    private Set<Integer> visit = new HashSet<>();
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        for (int i = 0; i < numCourses; i++) {
+            hm.put(i, new ArrayList<>());
+        }
+        System.out.println("hm->" + hm);
+        for (int[] prereq : prerequisites) {
+            hm.get(prereq[0]).add(prereq[1]);
+        }
+        System.out.println("hmfilled->" + hm);
+        for (int course = 0; course < numCourses; course++) {
+            if (!dfs(course)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean dfs(int course) {
+        if (visit.contains(course)) {
+
+            return false; // Cycle detected
+        }
+        if (hm.get(course).isEmpty()) {
+            return true;
+        }
+        visit.add(course);
+        for (int pre : hm.get(course)) {
+            if (!dfs(pre)) {
+                return false;
+            }
+        }
+        visit.remove(course);
+        hm.put(course, new ArrayList<>());
+        return true;
+    }
+}
