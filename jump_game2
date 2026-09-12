@@ -1,0 +1,30 @@
+class Solution {
+    public int jump(int[] nums) {
+        int jumps = 0;
+        int currentEnd = 0;
+        int farthest = 0;
+
+        // We don't need to process the last element because once we reach
+        // or cross the last index, no more jumps are needed.
+        for (int i = 0; i < nums.length - 1; i++) {
+            // Track the maximum reachable index from current positions
+            farthest = Math.max(farthest, i + nums[i]);
+
+            // If we have reached the end of the current jump boundary
+            if (i == currentEnd) {
+                jumps++;
+                currentEnd = farthest;
+                
+                // Early exit if the current boundary already reaches or exceeds the last index
+                if (currentEnd >= nums.length - 1) {
+                    break;
+                }
+            }
+        }
+
+        return jumps;
+    }
+}
+CODE END
+ComplexityTime Complexity: O(n) — Single pass through the array.
+Space Complexity: $O(1)$ — Only uses three scalar integer variables.
