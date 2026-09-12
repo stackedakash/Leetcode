@@ -1,0 +1,166 @@
+import java.util.*;
+
+class Solution {
+    private Map<Integer, List<Integer>> hm = new HashMap<>();
+    private Set<Integer> visit = new HashSet<>();
+
+    public int[] findRedundantConnection(int[][] edges) {
+        int n = edges.length;
+        
+        // Initialize adjacency list for nodes 1 to n
+        for (int i = 1; i <= n; i++) {chrome-extension://jfiihjeimjpkpoaekpdpllpaeichkiod/eraser.png$0
+            hm.put(i, new ArrayList<>());
+        }
+
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            // Reset visited set for every edge check
+            visit.clear();
+
+            // If a path already exists between u and v, adding this edge creates a cycle
+            if (dfs(u, v, -1)) {
+                return edge;
+            }
+
+            // Otherwise, add the edge to the undirected graph
+            hm.get(u).add(v);
+            hm.get(v).add(u);
+        }
+
+        return new int[0];
+    }
+
+    // Returns true if there is a path from 'curr' to 'target'
+    private boolean dfs(int curr, int target, int parent) {
+        if (curr == target) {
+            return true;
+        }
+
+        visit.add(curr);
+
+        for (int neighbor : hm.get(curr)) {
+            if (neighbor == parent) {
+                continue; // Skip going back to the parent node
+            }
+            if (!visit.contains(neighbor)) {
+                if (dfs(neighbor, target, curr)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+CODE END
+//
+Time Complexity: $O(N^2)$We iterate through $N$ edges. For each edge, DFS traverses up to $N$ nodes to check for an
+existing path.Space Complexity: $O(N)$The adjacency list hm, visit set, and the DFS recursive call stack each use up
+to $O(N)$ memory.
+
+
+//DRY RUN
+
+Input: edges = [[1,2],[2,3],[3,4],[1,4],[1,5]]
+Output: [1,4] dry tun this 
+Here is the step-by-step dry run of your modified DFS approach using edges = [[1,2],[2,3],[3,4],[1,4],[1,5]].
+
+Initial Setup
+hm initialized with nodes 1 through 5: {1: [], 2: [], 3: [], 4: [], 5: []}
+
+visit set: {}
+
+Step-by-Step Execution
+Edge 1: [1, 2]
+Goal: Check if a path exists between 1 and 2 before adding the edge.
+
+visit.clear() → visit = {}
+
+Run dfs(curr = 1, target = 2, parent = -1):
+
+curr != target (1 != 2).
+
+Add 1 to visit → visit = {1}.
+
+Neighbors of 1 in hm: [] (empty loop).
+
+Returns false.
+
+Since DFS returns false, add edge [1, 2] to hm:
+
+hm = {1: [2], 2: [1], 3: [], 4: [], 5: []}
+
+Edge 2: [2, 3]
+Goal: Check if a path exists between 2 and 3.
+
+visit.clear() → visit = {}
+
+Run dfs(curr = 2, target = 3, parent = -1):
+
+curr != target (2 != 3).
+
+Add 2 to visit → visit = {2}.
+
+Neighbor of 2: 1. 1 != parent (-1).
+
+Call dfs(curr = 1, target = 3, parent = 2):
+
+curr != target (1 != 3).
+
+Add 1 to visit → visit = {1, 2}.
+
+Neighbor of 1: 2. 2 == parent (2), so continue (skip going back).
+
+End of loop, returns false.
+
+Returns false.
+
+Since DFS returns false, add edge [2, 3] to hm:
+
+hm = {1: [2], 2: [1, 3], 3: [2], 4: [], 5: []}
+
+Edge 3: [3, 4]
+Goal: Check if a path exists between 3 and 4.
+
+visit.clear() → visit = {}
+
+Run dfs(curr = 3, target = 4, parent = -1):
+
+Traverses path 3 → 2 → 1.
+
+Node 4 is not reached, returns false.
+
+Add edge [3, 4] to hm:
+
+hm = {1: [2], 2: [1, 3], 3: [2, 4], 4: [3], 5: []}
+
+Edge 4: [1, 4]
+Goal: Check if a path exists between 1 and 4.
+
+visit.clear() → visit = {}
+
+Run dfs(curr = 1, target = 4, parent = -1):
+
+curr != target (1 != 4). Add 1 to visit → visit = {1}.
+
+Neighbor of 1: 2. Call dfs(curr = 2, target = 4, parent = 1).
+
+curr != target (2 != 4). Add 2 to visit → visit = {1, 2}.
+
+Neighbor of 2: 3 (skip 1 as parent). Call dfs(curr = 3, target = 4, parent = 2).
+
+curr != target (3 != 4). Add 3 to visit → visit = {1, 2, 3}.
+
+Neighbor of 3: 4 (skip 2 as parent). Call dfs(curr = 4, target = 4, parent = 3).
+
+Base case hit: curr == target (4 == 4). Returns true!
+
+The true value bubbles back up through all stack frames.
+
+Since dfs(1, 4, -1) returned true, a path already exists connecting 1 and 4. Adding [1, 4] creates a cycle.
+
+Result
+Returns [1, 4] immediately as the redundant connection.
+
