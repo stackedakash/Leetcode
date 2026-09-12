@@ -1,0 +1,39 @@
+
+class Solution {
+    public int countComponents(int n, int[][] edges) {
+        // Step 1: Build the adjacency list
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+        for (int[] edge : edges) {
+            adj.get(edge[0]).add(edge[1]);
+            adj.get(edge[1]).add(edge[0]);
+        }
+
+        boolean[] visited = new boolean[n];
+        int count = 0;
+
+        // Step 2: Iterate through all nodes
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                count++;
+                dfs(i, adj, visited); // Visit all connected nodes
+            }
+        }
+
+        return count;
+    }
+
+    private void dfs(int node, List<List<Integer>> adj, boolean[] visited) {
+        visited[node] = true;
+        for (int neighbor : adj.get(node)) {
+            if (!visited[neighbor]) {
+                dfs(neighbor, adj, visited);
+            }
+        }
+    }
+}
+CODE END
+Time Complexity: $O(V + E)$$V$ = Number of vertices (nodes, n)$E$ = Number of edges (edges.length)
+Space Complexity: $O(V + E)$
