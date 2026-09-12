@@ -1,0 +1,25 @@
+class Solution {
+    public boolean canJump(int[] nums) {
+        int maxReachable = 0;
+        
+        for (int i = 0; i < nums.length; i++) {
+            // If the current index is beyond our reach, we can't progress
+            if (i > maxReachable) {
+                return false;
+            }
+            
+            // Update the maximum index we can reach
+            maxReachable = Math.max(maxReachable, i + nums[i]);
+            
+            // Early exit: if we can already reach or pass the final index
+            if (maxReachable >= nums.length - 1) {
+                return true;
+            }
+        }
+        
+        return true;
+    }
+}
+CODE END
+ Single linear scanSpace Complexity O(n) 
+ Only one variable (maxReachable) O(1) 
