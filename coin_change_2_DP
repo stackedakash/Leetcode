@@ -1,0 +1,28 @@
+class Solution {
+    public int change(int amount, int[] coins) {
+      int [][] dp = new int[coins.length+1][amount+1];
+      for(int row=0;row<coins.length+1;row++)
+      {
+        dp[row][0]=1;
+
+      }
+      for(int row=1;row<=coins.length;row++)
+      {
+
+        for(int column=1;column<=amount;column++)
+        {
+            dp[row][column]=dp[row-1][column];
+            if(column-coins[row-1]>=0)
+            dp[row][column]=dp[row-1][column]+dp[row][column-coins[row-1]];
+        }
+      } return dp[coins.length][amount];
+      
+      
+       }
+}
+CODE END
+
+Let N =  (coins.length) and A =  amount 
+Total Time: O(N) + O(N *A) 
+  = O(N * A)
+  Space Complexity:  O(N * A)
