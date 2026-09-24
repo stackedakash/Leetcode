@@ -36,6 +36,77 @@ class Solution {
         return memo[i][state];
     }
 }
+CODE END
+
+
+===================================================================
+                   TIME AND SPACE COMPLEXITY
+===================================================================
+
+1. TIME COMPLEXITY: O(N)
+-------------------------------------------------------------------
+What N represents:
+  - N is the total number of days (the size of the `prices` array).
+
+Why it is O(N):
+  1. Unique States:
+     - Each state is defined by (day index `i`, transaction `state`).
+     - `i` ranges from 0 to N (N + 1 choices).
+     - `state` can only be 0 (Ready to Buy), 1 (Holding), or 2 (Cooldown).
+     - Total Unique States = (N + 1) * 3 = 3N + 3.
+
+  2. Work Per State:
+     - For each unvisited state, we perform simple arithmetic and 
+       make 1 or 2 recursive calls, taking constant time O(1).
+     - Once a state is solved, its result is stored in `memo`. 
+       Subsequent requests for the same state return instantly in O(1).
+
+  3. Calculation:
+     - Total Operations = (Total States) * (Work per State)
+     - Total Operations = (3N + 3) * O(1) = O(N)
+
+Conclusion:
+  The algorithm runs in linear time, scaling directly with the 
+  number of price days.
+
+
+
+2. SPACE COMPLEXITY: O(N)
+-------------------------------------------------------------------
+Why it is O(N):
+  The total memory used comes from two main sources:
+
+  1. Memoization Table (`memo` array):
+     - Size: `memo[N][3]`
+     - Stores values for 3 * N states.
+     - Memory Used = O(N)
+
+  2. Recursion Call Stack:
+     - In the worst case, the function calls itself day-by-day from 
+       day 0 to day N.
+     - Maximum Depth of Stack = N + 1 calls.
+     - Memory Used = O(N)
+
+  3. Calculation:
+     - Total Space = Memo Table Space + Recursion Stack Space
+     - Total Space = O(N) + O(N) = O(N)
+
+Conclusion:
+  The space required scales linearly with the number of price days.
+
+
+
+===================================================================
+                        QUICK SUMMARY TABLE
+===================================================================
+Metric            Complexity    Reason
+-------------------------------------------------------------------
+Time Complexity   O(N)          Only 3 * N unique subproblems, each 
+                                solved in O(1) time.
+
+Space Complexity  O(N)          Requires O(N) memory for the 2D memo 
+                                table and O(N) for recursion stack.
+===================================================================
 
 
 
