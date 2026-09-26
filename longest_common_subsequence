@@ -1,0 +1,50 @@
+class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int m = text1.length();
+        int n = text2.length();
+        // memo[i][j] stores the LCS for text1[i...] and text2[j...]
+        // Initialize with -1 to indicate unvisited states
+        int[][] memo = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            java.util.Arrays.fill(memo[i], -1);
+        }
+
+        return solve(0, 0, text1, text2, memo);
+    }
+
+    private int solve(int i, int j, String text1, String text2, int[][] memo) {
+        // Base case: reached the end of either string
+        if (i == text1.length() || j == text2.length()) {
+            return 0;
+        }
+
+        // Return cached result if already calculated
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+
+        }
+
+        // If characters match, move both pointers
+        if (text1.charAt(i) == text2.charAt(j)) {
+            memo[i][j] = 1 + solve(i + 1, j + 1, text1, text2, memo);
+        } else {
+            // If they don't match, explore both options and take the max
+            int skipText1 = solve(i + 1, j, text1, text2, memo);
+            int skipText2 = solve(i, j + 1, text1, text2, memo);
+            memo[i][j] = Math.max(skipText1, skipText2);
+
+        }
+
+        return memo[i][j];
+    }
+}
+//CODE END
+Complexity Analysis
+
+Time Complexity: O(M * N)
+
+Where M is the length of `text1` and N is the length of `text2`. With memoization, each of the M * N unique state pairs (i, j) is computed only once in O(1) time.
+
+Space Complexity: O(M * N)
+
+Requires O(M * N) space for the 2D memoization table, which dominates the O(M + N) maximum recursion stack depth.
