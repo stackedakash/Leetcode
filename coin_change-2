@@ -1,0 +1,54 @@
+import java.util.Arrays;
+
+class Solution {
+    private int[][] memo;
+
+    public int change(int amount, int[] coins) {
+        Arrays.sort(coins);
+        
+        memo = new int[coins.length][amount + 1];
+        for (int[] row : memo) {
+            Arrays.fill(row, -1);
+        }
+        
+        return dfs(0, 0, coins, amount);
+    }
+
+    private int dfs(int index, int currentAmount, int[] coins, int amount) {
+        // Base case: formed exact target amount
+        if (currentAmount == amount) {
+            return 1;
+        }
+
+        // Return memoized result
+        if (memo[index][currentAmount] != -1) {
+            return memo[index][currentAmount];
+        }
+
+        int totalWays = 0;
+
+        // Try using coins starting from current index to avoid duplicate combinations
+        for (int i = index; i < coins.length; i++) {
+            if (currentAmount + coins[i] > amount) {
+                break; // Array is sorted, so larger coins will also exceed
+            }
+            
+            totalWays += dfs(i, currentAmount + coins[i], coins, amount);
+        }
+
+        return memo[index][currentAmount] = totalWays;
+    }
+}
+
+
+//CODE END
+TIME AND SPACE COMPLEXITY
+
+Time Complexity: O(N * amount)
+- Explanation: There are N distinct coin types and target amounts from 0 to 'amount', creating N * (amount + 1) total unique subproblems (states). Since each subproblem is computed once and stored in our memoization array dp[i][j], every subsequent lookup runs in O(1) time.
+
+Space Complexity: O(N * amount)
+- Explanation:
+  1. Memoization Array: The 2D table Integer[][] dp requires O(N * amount) memory to store subproblem outcomes.
+  2. Recursion Stack Depth: In the worst-case call chain, the call stack goes up to O(N + amount) deep.
+  3. Total Auxiliary Space: O(N * amount) + O(N + amount) = O(N * amount).
