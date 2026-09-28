@@ -1,0 +1,35 @@
+import java.util.Arrays;
+
+class Solution {
+    private int[] memo;
+
+    public int rob(int[] nums) {
+        // 1. Initialize memo array with -1 to represent "uncomputed states"
+        memo = new int[nums.length];
+        Arrays.fill(memo, -1);
+
+        // 2. Start making choices from the first house (leftmost index 0)
+        return robFrom(0, nums);
+    }
+
+    private int robFrom(int i, int[] nums) {
+        // BASE CASE: If we go beyond the last house, 0 money left to rob
+        if (i >= nums.length) {
+            return 0;
+        }
+
+        // MEMOIZATION CHECK: If already computed, return cached answer immediately!
+        if (memo[i] != -1) {
+
+            return memo[i];
+        }
+
+        int result = Math.max(nums[i] + robFrom(i + 2, nums), robFrom(i + 1, nums));
+
+        // STORE & RETURN: Save max profit for state 'i' in memo array
+        return memo[i] = result;
+    }
+}
+//CODE END
+Time Complexity: O(N) — There are N total subproblems across both range queries, each taking O(1) time to evaluate once cached.
+Space Complexity: O(N) — Required for the 1D memo arrays and recursive stack call depth up to length N.
