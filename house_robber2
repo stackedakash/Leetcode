@@ -1,0 +1,45 @@
+import java.util.Arrays;
+
+class Solution {
+    public int rob(int[] nums) {
+        int n = nums.length;
+
+        // Base edge cases
+        if (n == 0)
+            return 0;
+        if (n == 1)
+            return nums[0]; // If only 1 house, just rob it
+
+        // Option A: Rob from index 0 to n - 2
+        int[] memoA = new int[n];
+        Arrays.fill(memoA, -1);
+        int optA = solve(0, n - 2, nums, memoA);
+
+        // Option B: Rob from index 1 to n - 1
+        int[] memoB = new int[n];
+        Arrays.fill(memoB, -1);
+        int optB = solve(1, n - 1, nums, memoB);
+
+        return Math.max(optA, optB);
+    }
+
+    private int solve(int i, int end, int[] nums, int[] memo) {
+        // Base Case: past the available boundary
+        if (i > end) {
+            return 0;
+        }
+
+        // Return cached result
+        if (memo[i] != -1) {
+            return memo[i];
+        }
+
+        int result = Math.max(nums[i] + solve(i + 2, end, nums, memo), solve(i + 1, end, nums, memo));
+
+        // Store and return maximum loot
+        return memo[i] = result;
+    }
+}
+//CODE END
+Time Complexity: O(N) — There are N total subproblems across both range queries, each taking O(1) time to evaluate once cached.
+Space Complexity: O(N) — Required for the 1D memo arrays and recursive stack call depth up to length N.
