@@ -1,0 +1,44 @@
+class Solution {
+    public int countSubstrings(String s) {
+        int result = 0;
+        if (s.length() == 0)
+            return 0;
+        for (int i = 0; i < s.length(); i++) {
+            int left = i;
+            int right = i;
+
+            result = result + isPal(s, i, i);//odd number palindrome check
+
+            result = result + isPal(s, left, right + 1);// even number palindrome check
+
+        }
+        return result;
+    }
+
+    int isPal(String s, int left, int right) {
+        int result = 0;
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            result++;
+            left--;
+            right++;
+        }
+        return result;
+    }
+}
+
+//CODE END
+A string of length $N$ has 2N - 1 potential centers for palindromes (N single-character centers for odd-length
+palindromes and N - 1 center pairs for even-length palindromes).
+
+
+For each center, the helper method isPal expands outward using two pointers (l and r).
+In the worst-case scenario (e.g., when the string consists of identical characters like "aaaaa"),
+expanding from a center can take O(N) operations.
+
+Total Operations: Summing the expansion steps across all 2N - 1 centers yields O(N times N) = O(N^2) time complexity, where N is the length of 
+the string s
+
+
+Space Complexity: O(1)The solution expands directly on the input string using two integer pointers (l and r) without
+allocating any extra dynamic data structures or recursion call stacks.
+
