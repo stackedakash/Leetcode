@@ -1,0 +1,51 @@
+public class Solution {
+    private int[] memo;
+
+    public int lengthOfLIS(int[] nums) {
+        int n = nums.length;
+        memo = new int[n];
+        Arrays.fill(memo, -1);
+
+        int maxLIS = 1;
+        for (int i = 0; i < n; i++) {
+            maxLIS = Math.max(maxLIS, dfs(nums, i));
+        }
+        return maxLIS;
+    }
+
+    private int dfs(int[] nums, int i) {
+        if (memo[i] != -1) {
+            return memo[i];
+        }
+
+        int LIS = 1;
+        for (int j = i + 1; j < nums.length; j++) {
+            if (nums[i] < nums[j]) {
+                LIS = Math.max(LIS, 1 + dfs(nums, j));
+            }
+        }
+
+        memo[i] = LIS;
+        return LIS;
+    }
+}
+//CODE END
+# Longest Increasing Subsequence (LIS) - Top-Down DP Analysis
+
+## Time Complexity: O(n^2)
+
+* Subproblems: There are n distinct states (one for each index i from 0 to n - 1), where memo[i] represents the length of the longest increasing subsequence starting at index i.
+* Work per Subproblem: When dfs(nums, i) is called for the first time, the for loop runs up to n - 1 - i times to check all indices j > i. Any recursive calls to dfs(nums, j) inside the loop either compute dfs(nums, j) once or return immediately in O(1) time from memo[j].
+* Total Operations: Across all state evaluations, the sum of loop iterations across all i is:
+  
+  (n - 1) + (n - 2) + ... + 1 + 0 = n(n - 1) / 2 = O(n^2)
+
+  The outer loop in lengthOfLIS calls dfs(nums, i) for each index, but since every dfs result is cached after its first run, each subproblem is computed exactly once.
+
+---
+
+## Space Complexity: O(n)
+
+* Memoization Array: The memo array requires O(n) space to store results for indices 0 to n - 1.
+* Recursion Call Stack: In the worst-case scenario (e.g., a strictly increasing array like [1, 2, 3, 4]), dfs recurses through every element sequentially, leading to a max call stack depth of O(n).
+* Total Auxiliary Space: O(n) + O(n) = O(n)
