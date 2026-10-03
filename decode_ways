@@ -1,0 +1,50 @@
+import java.util.Arrays;
+
+class Solution {
+    public int numDecodings(String s) {
+        int[] memo = new int[s.length()];
+        Arrays.fill(memo, -1); // -1 indicates uncomputed index
+        return decode(0, s, memo);
+    }
+
+    private int decode(int i, String s, int[] memo) {
+        // Base case: Reached the end of the string, found 1 valid path
+        if (i == s.length()) {
+            return 1;
+        }
+
+        // Leading zeros cannot be decoded
+        if (s.charAt(i) == '0') {
+            return 0;
+        }
+
+        // Return cached result if already computed
+        if (memo[i] != -1) {
+            return memo[i];
+        }
+
+        // Option 1: Take 1 digit
+        int ways = decode(i + 1, s, memo);
+
+        // Option 2: Take 2 digits (if valid, i.e., between 10 and 26)
+        if (i + 1 < s.length()) {
+            int twoDigit = Integer.parseInt(s.substring(i, i + 2));
+            if (twoDigit >= 10 && twoDigit <= 26) {
+                ways += decode(i + 2, s, memo);
+            }
+        }
+
+        // Cache and return the result
+        return memo[i] = ways;
+    }
+}
+
+//CODE END
+
+Time Complexity: O(N)
+Explanation: There are N subproblems, corresponding to each index from 0 to N-1. Due to memoization, each index is computed at most once. Inside each recursive step, string slicing and parsing take O(1) time since the substring length is fixed at 2.
+
+Space Complexity: O(N)
+Explanation:
+- O(N) memory is allocated for the memoization array (`memo`) of size N to cache results.
+- O(N) memory is required for the implicit recursion call stack in the worst case (e.g., a string of all '1's without branching terminates at depth N).
