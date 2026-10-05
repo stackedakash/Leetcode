@@ -1,0 +1,53 @@
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+
+        if (sum % 2 != 0) {
+            return false;
+        }
+
+        int target = sum / 2;
+        // memo[index][target] stores whether a target is reachable starting from index
+        Boolean[][] memo = new Boolean[nums.length][target + 1];
+
+        return dfs(0, target, nums, memo);
+    }
+
+    private boolean dfs(int i, int target, int[] nums, Boolean[][] memo) {
+        if (target == 0) return true;
+        if (i >= nums.length || target < 0) return false;
+
+        // Return cached result if available
+        if (memo[i][target] != null) {
+            return memo[i][target];
+        }
+
+        // Compute choices and cache the result
+        boolean take = dfs(i + 1, target - nums[i], nums, memo);
+        boolean notTake = dfs(i + 1, target, nums, memo);
+
+        memo[i][target] = take || notTake;
+        return memo[i][target];
+    }
+}
+
+//CODE END
+MEMOIZED SOLUTION (TOP-DOWN DYNAMIC PROGRAMMING)
+TIME COMPLEXITY: O(N * Target)
+
+Target is defined as (Total Sum / 2).
+
+There are N * (Target + 1) distinct subproblem states represented by the pair (index, target).
+
+Each state is calculated at most once. Subsequent calls with the same (index, target) return instantly from the memo table in O(1) time.
+
+SPACE COMPLEXITY: O(N * Target)
+
+Memoization table space: The memo array of size N x (Target + 1) takes O(N * Target) space in memory.
+
+Auxiliary call stack space: O(N) space reserved for the recursive function call stack depth.
+
+Total space complexity: O(N * Target) + O(N) = O(N * Target).
